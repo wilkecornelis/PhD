@@ -103,49 +103,55 @@ def MC_sim():
     global alpha
     global beta
 
-    ## Create pattern samples with source distribution
-    src_dstb = np.linspace(1,len(g_c)-1,91)
+    ## Create regular pattern samples with regular source distribution
+    #src_dstb = np.linspace(1,len(g_c)-1,91)
 
-    for i in range(91):
-        src_ind[i] = int(src_dstb[i])
-    
-    counter = 0  
-    for i in range(1001):
-        if i in src_ind:
-            g_c_samples[counter] = g_c[i]
-            g_l_samples[counter] = g_l[i]
-            g_g_samples[counter] = g_g[i]
-            
-            counter += 1
-     
-    ## Add jitter to samples (forced data corruption)  
-    for run_nr in range (N_runs):
-        for i in range(91):
-            jitter[i] = SNR + np.random.normal(1,1,1)
-            
-        g_m = g_c_samples * jitter
-    
-    ## Start multi-beam solution (iterative method)
-        shape = (1001,1)
-        g_l_est = np.ones(shape)
-        g_g_est = np.ones(shape)
-    
-        for iter in range(N_iter):
-            # Remove global estimate from total estimation
-            g_est = g_m.reshape(91)/g_g_est[src_ind].reshape(91)
-            
-            # Update calibration gain estimates for local model
-            alpha = np.polyfit(g_l_samples.reshape(91), g_est, 2)
-            g_l_est = np.polyval(alpha, g_l)
-                        
-            # Remove local estimate from total estimation
-            g_est = g_m.reshape(91)/g_l_est[src_ind].reshape(91)
-            
-            # Update calibration gain estimates for global model
-            beta = np.polyfit(l_range[src_ind].reshape(91), g_est, 2)
-            g_g_est = np.polyval(beta, l_range)            
-        
-        g_c_est[:,run_nr] = g_l_est.reshape(1001) * g_g_est.reshape(1001)
+    ## Create random pattern samples with random source distribution
+    b_samples = 9
+    shape = (91,1)
+    src_dstb = np.zeros(shape,dtype=np.int)
+    src_dstb = math.factorial(len(l_range))/math.factorial(len(l_range)-b_samples)
+
+#    for i in range(91):
+#        src_ind[i] = int(src_dstb[i])
+#    
+#    counter = 0  
+#    for i in range(1001):
+#        if i in src_ind:
+#            g_c_samples[counter] = g_c[i]
+#            g_l_samples[counter] = g_l[i]
+#            g_g_samples[counter] = g_g[i]
+#            
+#            counter += 1
+#     
+#    ## Add jitter to samples (forced data corruption)  
+#    for run_nr in range (N_runs):
+#        for i in range(91):
+#            jitter[i] = SNR + np.random.normal(1,1,1)
+#            
+#        g_m = g_c_samples * jitter
+#    
+#    ## Start multi-beam solution (iterative method)
+#        shape = (1001,1)
+#        g_l_est = np.ones(shape)
+#        g_g_est = np.ones(shape)
+#    
+#        for iter in range(N_iter):
+#            # Remove global estimate from total estimation
+#            g_est = g_m.reshape(91)/g_g_est[src_ind].reshape(91)
+#            
+#            # Update calibration gain estimates for local model
+#            alpha = np.polyfit(g_l_samples.reshape(91), g_est, 2)
+#            g_l_est = np.polyval(alpha, g_l)
+#                        
+#            # Remove local estimate from total estimation
+#            g_est = g_m.reshape(91)/g_l_est[src_ind].reshape(91)
+#            
+#            # Update calibration gain estimates for global model
+#            beta = np.polyfit(l_range[src_ind].reshape(91), g_est, 2)
+#            g_g_est = np.polyval(beta, l_range)            
+#        
+#        g_c_est[:,run_nr] = g_l_est.reshape(1001) * g_g_est.reshape(1001)
         
         
 def plot_stats():
@@ -171,5 +177,5 @@ def plot_beam():
     
 gen_beam()
 MC_sim()
-plot_stats()
+#plot_stats()
 #plot_beam()
