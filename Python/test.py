@@ -20,12 +20,16 @@ theta_range = np.arange(-math.pi/2,math.pi/2,0.005)
 l_range  = np.sin(theta_range)
 A_vec = np.ones(N_elements)
 D_vec = np.arange(0,N_elements*d_i,d_i)
-AF_full = np.ones(len(l_range))
+#AF_full = np.ones(len(l_range),dtype=np.complex_)
 sols = np.zeros(N_elements)
 
 shape = (N_elements,1)
 A_x = np.zeros(shape)
 A_est = np.zeros(shape)
+
+shape = (len(l_range),1)
+AF_full = np.complex128(shape)
+
 
 ## Add jitter to A_vec
 for i in range(N_elements):
@@ -36,13 +40,13 @@ for i in range(N_elements):
 for i in range(len(l_range)): 
     alpha = np.transpose(A_x)
     beta = np.exp(1j*k*D_vec*l_range[i]).reshape(50,1)
-    AF_full[i] =  abs(np.dot(alpha,beta))
+    AF_full[i] =  np.dot(alpha,beta)
 
 
 
 ## Evaluate Cramer
-for i in range(N_elements):
-    sols[i] = AF_full[i]
+#for i in range(N_elements):
+#    sols[i] = AF_full[i]
 
     
 
