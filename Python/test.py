@@ -20,6 +20,10 @@ theta_range = np.arange(-math.pi/2,math.pi/2,0.005)
 l_range  = np.sin(theta_range)
 A_vec = np.ones(N_elements)
 D_vec = np.arange(0,N_elements*d_i,d_i)
+<<<<<<< HEAD
+=======
+#AF_full = np.ones(len(l_range),dtype=np.complex_)
+>>>>>>> 6b80608426651399aff5910d2a9e8220f62075f5
 sols = np.zeros(N_elements)
 
 shape = (N_elements,1)
@@ -37,6 +41,10 @@ shape = (N_elements,N_elements)
 a_mat = np.zeros(shape)
 a_inv = np.zeros(shape)
 
+shape = (len(l_range),1)
+AF_full = np.complex128(shape)
+
+
 ## Add jitter to A_vec
 #for i in range(N_elements):
 #   A_x[i] = 1 + np.random.normal(0,0.1,1)
@@ -51,6 +59,7 @@ a_inv = np.zeros(shape)
 for i in range(len(l_range)): 
     alpha = np.transpose(A_x)
     beta = np.exp(1j*k*D_vec*l_range[i]).reshape(50,1)
+<<<<<<< HEAD
     x = np.real(np.dot(alpha,beta)) + 1j*np.imag(np.dot(alpha,beta))
     AF_full[i] =  np.dot(alpha,beta)
 
@@ -67,6 +76,15 @@ for i in range(len(l_range)):
 ## solve x_vec
 #a_inv = np.linalg.inv(a_mat)
 #x_vec = np.matmul(a_inv,AF_samples)
+=======
+    AF_full[i] =  np.dot(alpha,beta)
+
+
+
+## Evaluate Cramer
+#for i in range(N_elements):
+#    sols[i] = AF_full[i]
+>>>>>>> 6b80608426651399aff5910d2a9e8220f62075f5
 
     
 #py.plot(AF_samples)
