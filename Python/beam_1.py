@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import math
 import pylab as py
 
+from readFile import read
+
 res = 1001
 N_runs = 1000
 N_iter = 5
@@ -45,9 +47,48 @@ g_c_est = np.zeros(shape)
 shape = (1001,1)
 g_c_est_std = np.zeros(shape)
 
+l_range = np.linspace(-1,1,res)
+l_range = l_range.reshape(len(l_range),1)
+AF_1 = np.zeros((len(l_range),1))
 
-l_range = np.linspace(-0.5,0.5,res)
+def import_beams():
+    
+    global beam_g1 
+    beam_g1 = read('FF_11.ffe')
+    beam_g2 = read('FF_inf_dense.ffe')
+    
+    py.plot(10**(beam_g1/10)/(max(10**(beam_g1/10))))
+    py.plot(10**(beam_g2/10)/(max(10**(beam_g2/10))))
+    
+def gen_arr():
+    
+    global A_x
+    
+    N_ant = 20
+    shape = (N_ant,1)
+    A_x = np.ones(shape,dtype=complex)
+    alpha = np.complex128(shape)
+    beta = np.complex128(shape)
+    
+    lambda_0 = 0.3
+    d_i = lambda_0/2
+    k = 2*math.pi/lambda_0
+    d_vec = np.arange(0,N_ant*d_i,d_i)
+    
+    l_0 = np.sin(20/180*np.pi)
+    A_x = np.exp(-1j*k*d_vec*l_0)
+    
+#    for i in range(len(l_range)):
+#        AF_1[i] = np.sum(np.sin(k*N_ant*d_vec*(1-l_range[i])/2)/(np.sin(k*d_vec*(1-l_range[i]))))
 
+    for i in range(len(l_range)): 
+        alpha = np.transpose(A_x)
+        beta = np.exp(1j*k*d_vec*l_range[i]).reshape(N_ant,1)
+        
+        AF_1[i] =  np.dot(alpha,beta)
+    
+    py.plot(l_range,AF_1)
+    
 def gen_beam():
     
     for i in range(res):
@@ -153,8 +194,7 @@ def MC_sim():
             g_g_est = np.polyval(beta, l_range)            
         
         g_c_est[:,run_nr] = g_l_est.reshape(1001) * g_g_est.reshape(1001)
-        
-        
+                
 def plot_stats():
     global g_c_est_std
     global buffer
@@ -175,8 +215,9 @@ def plot_beam():
     py.plot(l_range,g_c)
 
 
-    
-gen_beam()
-MC_sim()
-plot_stats()
+import_beams()  
+#gen_arr()  
+#gen_beam()
+#MC_sim()
+#plot_stats()
 #plot_beam()
